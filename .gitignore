@@ -1,0 +1,9 @@
+*.cfg
+*.db
+airflow/logs/*
+
+.vscode
+.DS_Store
+
+*.pyc
+
