@@ -1,6 +1,7 @@
 *.cfg
 *.db
 airflow/logs/*
+dist/bing
 
 .vscode
 .DS_Store
