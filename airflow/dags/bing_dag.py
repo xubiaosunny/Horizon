@@ -14,7 +14,7 @@ from common.config import default_args
 
 BING_HOST = "https://cn.bing.com"
 WALLPAPER_JSON_URL = '/HPImageArchive.aspx?format=js&idx={idx}&n={n}'
-image_dir = os.path.abspath(os.path.dirname(__file__))
+image_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '../../dist/bing')
 
 dag = DAG(
     dag_id='Bing', default_args=default_args,
