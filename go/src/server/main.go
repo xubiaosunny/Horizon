@@ -17,5 +17,5 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	r := setupRouter()
-	r.Run()
+	r.Run("127.0.0.1:8080")
 }
