@@ -5,6 +5,11 @@ dist/bing
 
 .vscode
 .DS_Store
+.cache
 
 *.pyc
+
+# go
+go/pkg
+go/src/server/vendor
 
