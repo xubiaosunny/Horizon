@@ -2,10 +2,9 @@ package wallpaper
 
 import (
 	"database/sql"
-	"fmt"
-	"io/ioutil"
+	"encoding/base64"
 	"net/http"
-	"path"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
@@ -13,7 +12,7 @@ import (
 
 type WapllpStruct struct {
 	Date      string
-	FileName  string
+	FileSrc   string
 	Copyright string
 }
 
@@ -25,7 +24,7 @@ func checkErr(err error) {
 
 func Bing(c *gin.Context) {
 	idx := c.DefaultQuery("idx", "0")
-	n := c.DefaultQuery("n", "10")
+	n := c.DefaultQuery("n", "1")
 
 	bingPath := "../../../dist/bing"
 	data := []WapllpStruct{}
@@ -46,24 +45,28 @@ func Bing(c *gin.Context) {
 		if err := rows.Scan(&date, &copyright); err != nil {
 			checkErr(err)
 		}
-		// fmt.Printf("date=%s copyright=%s\n", date, copyright)
+		ff, _ := os.Open(bingPath + "/" + date + ".jpg")
+		defer ff.Close()
+		sourcebuffer := make([]byte, 500000)
+		n, _ := ff.Read(sourcebuffer)
+		sourcestring := base64.StdEncoding.EncodeToString(sourcebuffer[:n])
+
+		data = append(data, WapllpStruct{date, sourcestring, copyright})
 	}
 	if err := rows.Err(); err != nil {
 		checkErr(err)
 	}
 
-	files, _ := ioutil.ReadDir(bingPath)
-	fmt.Println(reverse(files))
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		} else {
-			fileSuffix := path.Ext(file.Name())
-			if fileSuffix == ".jpg" {
-				data = append(data, WapllpStruct{fileSuffix, file.Name()})
-			}
-		}
-	}
-	fmt.Println(data)
+	// files, _ := ioutil.ReadDir(bingPath)
+	// for _, file := range files {
+	// 	if file.IsDir() {
+	// 		continue
+	// 	} else {
+	// 		fileSuffix := path.Ext(file.Name())
+	// 		if fileSuffix == ".jpg" {
+	// 			data = append(data, WapllpStruct{fileSuffix, file.Name()})
+	// 		}
+	// 	}
+	// }
 	c.JSON(http.StatusOK, data)
 }
